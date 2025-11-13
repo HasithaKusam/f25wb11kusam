@@ -15,6 +15,29 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connection to DB succeeded'));
 
 var Costume = require('./models/costume');
+async function recreateDB() {
+  await Costume.deleteMany();
+
+  const items = [
+    { costume_type: 'Ghost',   size: 'Large',  cost: 15.4 },
+    { costume_type: 'Witch',   size: 'Medium', cost: 22.0 },
+    { costume_type: 'Vampire', size: 'Small',  cost: 18.9 }
+  ];
+
+  for (let i of items) {
+    let doc = new Costume(i);
+    await doc.save();
+    console.log(`Saved: ${doc.costume_type}`);
+  }
+
+  console.log("✅ Seeded 3 Costume documents successfully!");
+}
+
+const reseed = true;
+if (reseed) {
+  recreateDB();
+}
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
