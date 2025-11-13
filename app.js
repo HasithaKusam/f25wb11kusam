@@ -12,9 +12,10 @@ mongoose.connect(connectionString);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => console.log('Connection to DB succeeded'));
+db.once('open', () => console.log("Connection to DB succeeded"));
 
 var Costume = require('./models/costume');
+
 async function recreateDB() {
   await Costume.deleteMany();
 
@@ -30,16 +31,16 @@ async function recreateDB() {
     console.log(`Saved: ${doc.costume_type}`);
   }
 
-  console.log("✅ Seeded 3 Costume documents successfully!");
+  console.log("Seeded 3 Costume documents!");
 }
 
-const reseed = true;
-if (reseed) {
-  recreateDB();
-}
+const reseed = false;
+if (reseed) { recreateDB(); }
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const resourceRouter = require('./routes/resource');
+const costumesRouter = require('./routes/costumes');
 
 var app = express();
 
@@ -52,6 +53,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/resource', resourceRouter);   
+app.use('/costumes', costumesRouter);   
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -62,6 +66,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
   res.status(err.status || 500);
   res.render('error');
 });

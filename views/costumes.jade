@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h1= title
+  ul
+    each c in results
+      li #{c.costume_type} — size: #{c.size} — cost: #{c.cost}
