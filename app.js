@@ -37,10 +37,12 @@ async function recreateDB() {
 const reseed = false;
 if (reseed) { recreateDB(); }
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-const resourceRouter = require('./routes/resource');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+
 const costumesRouter = require('./routes/costumes');
+
+const resourceRouter = require('./routes/resource');
 
 var app = express();
 
@@ -53,8 +55,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/resource', resourceRouter);   
-app.use('/costumes', costumesRouter);   
+
+app.use('/resource', resourceRouter);
+
+app.use('/costumes', costumesRouter);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

@@ -13,6 +13,7 @@ router.get('/costumes/:id', costume_controller.costume_detail);
 router.post('/costumes', costume_controller.costume_create_post);
 
 router.put('/costumes/:id', costume_controller.costume_update_put);
+
 router.delete('/costumes/:id', costume_controller.costume_delete);
 
 module.exports = router;
