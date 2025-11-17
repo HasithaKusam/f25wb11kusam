@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Delete Costume
+  p Are you sure you want to delete this costume?
+
+  ul
+    li Type: #{toDelete.costume_type}
+    li Size: #{toDelete.size}
+    li Cost: #{toDelete.cost}
+
+  form(action=`/costumes/delete?id=${toDelete._id}` method='POST')
+    button(type='submit') Yes, delete
+    |  
+    a(href='/costumes') Cancel

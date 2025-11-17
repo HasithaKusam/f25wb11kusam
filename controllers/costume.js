@@ -1,5 +1,4 @@
 const Costume = require('../models/costume');
-
 exports.costume_list = async function(req, res) {
   try {
     const items = await Costume.find();
@@ -87,5 +86,67 @@ exports.costume_delete = async function(req, res) {
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err });
+  }
+};
+
+exports.costume_view_one_Page = async function(req, res) {
+  console.log("costume_view_one_Page id:", req.query.id);
+  try {
+    let result = await Costume.findById(req.query.id);
+    res.render('costumedetail', { title: 'Costume Detail', toShow: result });
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+};
+
+
+exports.costume_create_Page = function(req, res) {
+  console.log("costume_create_Page");
+  res.render('costumecreate', { title: 'Create Costume' });
+};
+
+
+exports.costume_update_Page = async function(req, res) {
+  console.log("costume_update_Page id:", req.query.id);
+  try {
+    let result = await Costume.findById(req.query.id);
+    res.render('costumeupdate', { title: 'Update Costume', toUpdate: result });
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+};
+
+
+exports.costume_update_post = async function(req, res) {
+  console.log("costume_update_post id:", req.query.id, "body:", req.body);
+  try {
+    let toUpdate = await Costume.findById(req.query.id);
+    if (req.body.costume_type) toUpdate.costume_type = req.body.costume_type;
+    if (req.body.size) toUpdate.size = req.body.size;
+    if (req.body.cost) toUpdate.cost = req.body.cost;
+    await toUpdate.save();
+    res.redirect('/costumes');
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+};
+
+exports.costume_delete_Page = async function(req, res) {
+  console.log("costume_delete_Page id:", req.query.id);
+  try {
+    let result = await Costume.findById(req.query.id);
+    res.render('costumedelete', { title: 'Delete Costume', toDelete: result });
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+};
+
+exports.costume_delete_post = async function(req, res) {
+  console.log("costume_delete_post id:", req.query.id);
+  try {
+    await Costume.findByIdAndDelete(req.query.id);
+    res.redirect('/costumes');
+  } catch (err) {
+    res.status(500).send({ error: err });
   }
 };

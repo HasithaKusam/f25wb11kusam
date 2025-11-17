@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 Update Costume
+  form(action=`/costumes/update?id=${toUpdate._id}` method='POST')
+    div
+      label(for='costume_type') Type:
+      input#costume_type(type='text' name='costume_type' required value=toUpdate.costume_type)
+    div
+      label(for='size') Size:
+      input#size(type='text' name='size' required value=toUpdate.size)
+    div
+      label(for='cost') Cost:
+      input#cost(type='number' step='0.01' name='cost' required value=toUpdate.cost)
+    div
+      button(type='submit') Update

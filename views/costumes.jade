@@ -1,7 +1,26 @@
 extends layout
 
 block content
-  h1= title
-  ul
-    each c in results
-      li #{c.costume_type} — size: #{c.size} — cost: #{c.cost}
+  h1 Costume List
+  table
+    thead
+      tr
+        th Type
+        th Size
+        th Cost
+        th Actions
+    tbody
+      each c in results
+        tr
+          td= c.costume_type
+          td= c.size
+          td= c.cost
+          td
+            a(href=`/costumes/detail?id=${c._id}`) Details
+            |  |
+            a(href=`/costumes/update?id=${c._id}`) Update
+            |  |
+            a(href=`/costumes/delete?id=${c._id}`) Delete
+
+  p
+    a(href='/costumes/create') Create new costume
