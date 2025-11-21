@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -53,6 +55,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
@@ -62,10 +73,41 @@ app.use('/costumes', costumesRouter);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+var Account = require('./models/account');
+
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 app.use(function(req, res, next) {
   next(createError(404));
 });
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+
+    Account.findOne({ username: username })
+      .then(function (user) {
+
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+
+        user.authenticate(password, function(err, result) {
+          if (err) {
+            return done(err);
+          }
+          if (!result.user) {
+            return done(null, false, { message: 'Incorrect password.' });
+          }
+          return done(null, user);
+        });
+
+      })
+      .catch(function(err){
+        return done(err);
+      });
+
+  }
+));
 
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
