@@ -41,9 +41,7 @@ if (reseed) { recreateDB(); }
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
 const costumesRouter = require('./routes/costumes');
-
 const resourceRouter = require('./routes/resource');
 
 var app = express();
@@ -55,59 +53,32 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(require('express-session')({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false
 }));
 
+var Account = require('./models/account');
+
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use('/resource', resourceRouter);
-
 app.use('/costumes', costumesRouter);
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-var Account = require('./models/account');
-
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
 
 app.use(function(req, res, next) {
   next(createError(404));
 });
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-
-    Account.findOne({ username: username })
-      .then(function (user) {
-
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
-        }
-
-        user.authenticate(password, function(err, result) {
-          if (err) {
-            return done(err);
-          }
-          if (!result.user) {
-            return done(null, false, { message: 'Incorrect password.' });
-          }
-          return done(null, user);
-        });
-
-      })
-      .catch(function(err){
-        return done(err);
-      });
-
-  }
-));
 
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;

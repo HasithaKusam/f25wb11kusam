@@ -1,6 +1,16 @@
 exports.api = function (req, res) {
-  res.json([{
-    resource: "costumes",
-    verbs: ["GET", "POST", "PUT", "DELETE"]
-  }]);
+  res.send({
+    resources: [
+      {
+        resource: "costumes",
+        endpoints: [
+          "GET /resource/costumes",
+          "GET /resource/costumes/:id",
+          "POST /resource/costumes",
+          "PUT /resource/costumes/:id",
+          "DELETE /resource/costumes/:id"
+        ]
+      }
+    ]
+  });
 };

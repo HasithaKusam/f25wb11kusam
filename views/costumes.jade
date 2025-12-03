@@ -2,18 +2,25 @@ extends layout
 
 block content
   h1= title
-  - let items = results;
 
-  
-  div(class="container-fluid")
-    div(class="row m-1")
-      each item in items
-        - let destination = `dispatch("/costumes/update?id=${item._id}")`
-        div(class="row-sm-2 m-1")
-          | Item #{item.costume_type}(#{item.size}) is #{item.cost}
-          button.btn.btn-primary.ml-1(onclick=destination) Update
+  a.btn.btn-success(href="/costumes/create") Create New Costume
+  br
+  br
 
-  script.
-    function dispatch(path){
-      window.location.href = path;
-    }
+  table.table
+    thead
+      tr
+        th Type
+        th Size
+        th Cost
+        th Actions
+    tbody
+      each item in results
+        tr
+          td #{item.costume_type}
+          td #{item.size}
+          td #{item.cost}
+          td
+            a.btn.btn-info(href=`/costumes/detail?id=${item._id}`) Detail
+            a.btn.btn-primary.ml-1(href=`/costumes/update?id=${item._id}`) Update
+            a.btn.btn-danger.ml-1(href=`/costumes/delete?id=${item._id}`) Delete
